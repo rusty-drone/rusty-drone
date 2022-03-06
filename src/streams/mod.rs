@@ -15,7 +15,7 @@ pub trait Stream {
         MapStream { parent: self, f }
     }
 
-    fn zip<Out: AddAssign + Add + Sub + Mul + Div + Copy, S: Stream, F: Fn(Self::T, Self::T) -> Out>(self, other: Self, f: F) -> ZipStream<Self, Self, Out, F> where Self: Sized,
+    fn zip<Out: AddAssign + Add + Sub + Mul + Div + Copy, S: Stream, F: Fn(Self::T, S::T) -> Out>(self, other: S, f: F) -> ZipStream<Self, S, Out, F> where Self: Sized,
     {
         ZipStream { s: self, p: other, f }
     }
