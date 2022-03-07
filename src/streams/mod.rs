@@ -1,5 +1,4 @@
 use std::{ops::{AddAssign, Add, Sub, Mul, Div}};
-
 pub trait Stream {
     type T: AddAssign + Add + Sub + Mul + Div + Copy;
     type Out: AddAssign + Add + Sub + Mul + Div + Copy;
@@ -54,6 +53,7 @@ impl<P: Stream, Out: AddAssign + Add + Sub + Mul + Div + Copy, F: Fn(P::T) -> Ou
     }
 }
 
+// used to synthesize the output between to streams
 pub struct ZipStream<S: Stream, P: Stream, Out: AddAssign + Add + Sub + Mul + Div + Copy, F: Fn(S::T, P::T) -> Out> {
     s: S, //parent 1
     p: P, //parent 2
@@ -69,3 +69,22 @@ impl<S: Stream, P: Stream, Out: AddAssign + Add + Sub + Mul + Div + Copy, F: Fn(
     }
 }
 
+// used for sensor readings or other 3rd party data
+pub struct CustomStream<Out: AddAssign + Add + Sub + Mul + Div + Copy, F: Fn() -> Out> {
+    fetch: F,
+}
+
+impl<Out: AddAssign + Add + Sub + Mul + Div + Copy, F: Fn() -> Out> CustomStream<Out, F> {
+    pub fn new(fetch: F) -> Self {
+        CustomStream { fetch }
+    }
+}
+
+impl<Out: AddAssign + Add + Sub + Mul + Div + Copy, F: Fn() -> Out> Stream for CustomStream<Out, F> {
+    type T = Out;
+    type Out = Out;
+
+    fn next(&mut self) -> Out {
+        (self.fetch)()
+    }
+}
