@@ -20,6 +20,7 @@ pub trait Stream {
     }
 }
 
+#[derive(Copy, Clone)]
 pub struct ConstantStream<T: AddAssign + Add + Sub + Mul + Div + Copy> {
     value: T,
 }
@@ -39,6 +40,7 @@ impl<T: Copy + AddAssign + Sub + Mul + Add + Div> Stream for ConstantStream<T> {
     }
 }
 
+#[derive(Copy, Clone)]
 pub struct MapStream<P: Stream, Out: AddAssign + Add + Sub + Mul + Div + Copy, F: Fn(P::T) -> Out> {
     parent: P,
     f: F,
@@ -54,6 +56,7 @@ impl<P: Stream, Out: AddAssign + Add + Sub + Mul + Div + Copy, F: Fn(P::T) -> Ou
 }
 
 // used to synthesize the output between to streams
+#[derive(Copy, Clone)]
 pub struct ZipStream<S: Stream, P: Stream, Out: AddAssign + Add + Sub + Mul + Div + Copy, F: Fn(S::T, P::T) -> Out> {
     s: S, //parent 1
     p: P, //parent 2
@@ -69,18 +72,51 @@ impl<S: Stream, P: Stream, Out: AddAssign + Add + Sub + Mul + Div + Copy, F: Fn(
     }
 }
 
+#[derive(Clone)]
+pub struct SlideStream<S: Stream, T: AddAssign + Add + Sub + Mul + Div + Copy> {
+    parent: S,
+    data: Vec<T>,
+}
+
+impl<S: Stream, T: AddAssign + Add + Sub + Mul + Div + Copy> Stream for SlideStream<S, T> where S: Stream<T = T> {
+    type T = T;
+    type Out = T;
+
+    fn next(&mut self) -> T {
+        let append_value = self.parent.next();
+        self.data.drain(0..1);
+        self.data.push(append_value);
+        return append_value;
+    }
+}
+
+impl<S: Stream, T: AddAssign + Add + Sub + Mul + Div + Copy> SlideStream<S, T> where S: Stream<T = T> {
+    pub fn new(parent: S, size: usize, zero_value: T) -> Self {
+        SlideStream { parent, data: vec![zero_value; size] }
+    }
+
+    pub fn get_data(&self) -> &Vec<T> {
+        &self.data
+    }
+
+    pub fn get_size(&self) -> usize {
+        self.data.len()
+    }
+}
+
 // used for sensor readings or other 3rd party data
-pub struct CustomStream<Out: AddAssign + Add + Sub + Mul + Div + Copy, F: Fn() -> Out> {
+#[derive(Copy, Clone)]
+pub struct CustomStream<Out: AddAssign + Add + Sub + Mul + Div + Copy, F: FnMut() -> Out> {
     fetch: F,
 }
 
-impl<Out: AddAssign + Add + Sub + Mul + Div + Copy, F: Fn() -> Out> CustomStream<Out, F> {
+impl<Out: AddAssign + Add + Sub + Mul + Div + Copy, F: FnMut() -> Out> CustomStream<Out, F> {
     pub fn new(fetch: F) -> Self {
         CustomStream { fetch }
     }
 }
 
-impl<Out: AddAssign + Add + Sub + Mul + Div + Copy, F: Fn() -> Out> Stream for CustomStream<Out, F> {
+impl<Out: AddAssign + Add + Sub + Mul + Div + Copy, F: FnMut() -> Out> Stream for CustomStream<Out, F> {
     type T = Out;
     type Out = Out;
 

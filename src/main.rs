@@ -1,17 +1,25 @@
-use rust_architecture::streams::{self, Stream};
-use rust_architecture::controllers::{self, error, proportional_controller};
+// use std::borrow::{BorrowMut, Borrow};
+// use std::rc::Rc;
+
+use rust_architecture::streams::{Stream, CustomStream, SlideStream};
+use rust_architecture::controllers::{derivative_controller};
 
 fn main() {
-    println!("Hello, world!");
-    let p = 0.04;
-    let mut y = streams::CustomStream::new(|| {
-        let gyro_x = 15.0;
-        println!("Recieved gyro data");
-        gyro_x
-    });
-    let mut gyro_p = proportional_controller(y, p);
-    std::println!("{:?}", gyro_p.next());
-    std::println!("{:?}", gyro_p.next());
+    let mut x = 0.0;
 
-    //motor.SetDutyCycle(y.next());
+
+    let stream = CustomStream::new(||  {
+        println!("Accepted new gyro values");
+        x += 2.0;
+        x
+    }).map(|x| x * 2.0);
+
+    let s = SlideStream::new(stream, 4, 0.0);
+
+    let mut derivative = derivative_controller(s, 1.5);
+
+    println!("{:?}", derivative.next());
+    println!("{:?}", derivative.next());
+    println!("{:?}", derivative.next());
+    println!("{:?}", derivative.next());
 }
