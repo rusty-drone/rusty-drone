@@ -13,17 +13,19 @@ where <O as Mul>::Output: AddAssign + Copy + Sub + Mul + Div + Add{
     s.map(move |x: S::T| {x * p})
 }
 
-pub fn derivative_controller<O: AddAssign + Add + Sub + Mul + Div + Copy, S: Stream<T = O>> (mut s: SlideStream<S, O>, d: O) -> 
-impl Stream<T = <<O as Sub>::Output as Mul>::Output> 
-where <<O as Sub>::Output as Mul>::Output: AddAssign + Copy + Sub + Mul + Div + Add,
- <O as Sub>::Output: Mul,
- O: Sub<Output = O>{
-    if s.get_size() <= 1 {
-        panic!("SlideStream window is not of compatible size for derivative operation!");
-    }
+//TODO(#1): update this to use TimeStamped
 
-    return CustomStream::new(move || {
-        // s.next() is placed at size - 1, so the previous value is at size - 2. This is why the window must be greater than 1
-        (s.next() - s.get_data()[s.get_size() - 2]) * d
-    });
-}
+// pub fn derivative_controller<O: AddAssign + Add + Sub + Mul + Div + Copy, S: Stream<T = O>> ( mut s: SlideStream<S, O>, d: O) -> 
+// impl Stream<T = <<O as Sub>::Output as Mul>::Output> 
+// where <<O as Sub>::Output as Mul>::Output: AddAssign + Copy + Sub + Mul + Div + Add,
+//  <O as Sub>::Output: Mul,
+//  O: Sub<Output = O>{
+//     if s.get_size() <= 1 {
+//         panic!("SlideStream window is not of compatible size for derivative operation!");
+//     }
+
+//     return CustomStream::new( move || {
+//         // s.next() is placed at size - 1, so the previous value is at size - 2. This is why the window must be greater than 1
+//         (s.next() - s.get_data()[s.get_size() - 2]) * d
+//     });
+// }
