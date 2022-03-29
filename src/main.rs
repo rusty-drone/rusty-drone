@@ -1,7 +1,7 @@
 use std::time::{Duration, SystemTime};
 
 use rust_architecture::streams::{Stream, CustomStream, SlideStream, ConstantStream};
-use rust_architecture::controllers::{proportional_controller};
+// use rust_architecture::controllers::{proportional_controller, derivative_controller};
 use rust_architecture::time::{zip_with_time, TimeStamped};
 
 fn main() {
@@ -27,7 +27,7 @@ fn main() {
     });
 
     let mut zip = zip_with_time(time, data);
-    let mut slide = SlideStream::new(zip.clone(), 2, zip.next());
+    let mut slide = SlideStream::new(zip.clone(), 4, zip.next());
 
     std::println!("{:?}", data.next());
     std::println!("{:?}", data.next());
@@ -48,12 +48,24 @@ fn main() {
     
 
     println!("{:?}", d.next());
-    println!("{:?}", d.next());
-    println!("{:?}", d.next());
-    println!("{:?}", d.next());
-    println!("{:?}", d.next());
-    println!("{:?}", d.next());
-    println!("{:?}", d.next());
+    println!("{:?}", d.parent.get_data());
     println!("{:?}", d.next());
     println!("{:?}", d.parent.get_data());
+    println!("{:?}", d.next());
+    println!("{:?}", d.parent.get_data());
+    println!("{:?}", d.next());
+    println!("{:?}", d.parent.get_data());
+    println!("{:?}", d.next());
+    println!("{:?}", d.parent.get_data());
+    println!("{:?}", d.next());
+    println!("{:?}", d.parent.get_data());
+    println!("{:?}", d.next());
+    println!("{:?}", d.parent.get_data());
+    println!("{:?}", d.next());
+    println!("{:?}", d.parent.get_data());
+
+    // let mut derivative = derivative_controller(data, time, 2);
+    // println!("{:?}", derivative.next());
+    // println!("{:?}", derivative.next());
+    // println!("{:?}", derivative.next());
 }

@@ -45,6 +45,14 @@ impl<T, O> Mul for TimeStamped<T, O>  where T: AddAssign + Add + Sub + Mul + Div
     }
 }
 
+impl <T, O> Mul<T> for TimeStamped<T, O>  where T: AddAssign + Add + Sub + Mul + Div, O: AddAssign + Add + Sub + Mul + Div{
+    type Output = <T as Mul<T>>::Output;
+
+    fn mul(self, rhs: T) -> Self::Output {
+        return self.value * rhs
+    }
+}
+
 impl<T, O> Div for TimeStamped<T, O>  where T: AddAssign + Add + Sub + Mul + Div, O: AddAssign + Add + Sub + Mul + Div{
     type Output = <T as Div>::Output;
 
