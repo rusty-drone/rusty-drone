@@ -1,59 +1,71 @@
+use std::borrow::{Borrow, BorrowMut};
 pub trait Task { 
-    fn initialize(&self);
-    fn execute(&self);
-    fn end(&self) -> bool;
+    fn initialize(&mut self);
+    fn execute(&mut self);
+    fn end(&mut self);
+    fn has_finished(&mut self) -> bool;
 }
 
-pub struct InfiniteTask<F: Fn()> {
+#[derive(Clone)]
+pub struct InfiniteTask<F: FnMut()> {
     f: F,
     name: String,
 }
 
-impl <F: Fn()> InfiniteTask<F> {
+impl <F: FnMut()> InfiniteTask<F> {
     pub fn new(f: F, name: String) -> Self {
-        InfiniteTask { f , name }
+        InfiniteTask { f, name }
     }
 }
 
-impl <F: Fn()> Task for InfiniteTask<F> {
-    fn initialize(&self) {
+impl <F: FnMut()> Task for InfiniteTask<F> {
+    fn initialize(&mut self) {
         println!("Initializing {}...", self.name);
     }
 
-    fn execute(&self) {
+    fn execute(&mut self) {
         (self.f)();
     }
 
-    fn end(&self) -> bool{
-        println!("Ending {}...", self.name);
+    fn has_finished(&mut self) -> bool{
         false
     }
-}
 
-pub struct FiniteTask<F: Fn(), P: Fn() -> bool> {
-    name: String,
-    f: F,
-    conclude: P,
-}
-
-impl <F: Fn(), P: Fn() -> bool> FiniteTask<F, P> {
-    pub fn new(f: F, name: String, conclude: P) -> Self {
-        FiniteTask { f , name, conclude }
+    fn end(&mut self) {
     }
 }
 
-impl <F: Fn(), P: Fn() -> bool> Task for FiniteTask<F, P> {
-    fn initialize(&self) {
+#[derive(Clone)]
+pub struct FiniteTask<F: FnMut(), P: FnMut(), E: FnMut() -> bool> {
+    pub name: String,
+    pub f: F,
+    pub conclude: P,
+    pub has_finished: E,
+}
+
+impl <F: FnMut(), P: FnMut(), E: FnMut() -> bool> FiniteTask<F, P, E> {
+    pub fn new(f: F, name: String, conclude: P, has_finished: E) -> Self {
+        FiniteTask { f , name, conclude, has_finished }
+    }
+}
+
+impl <F: FnMut(), P: FnMut(), E: FnMut() -> bool> Task for FiniteTask<F, P, E> {
+    fn initialize(&mut self) {
         println!("Initializing {}...", self.name);
     }
 
-    fn execute(&self) {
+    fn execute(&mut self) {
         (self.f)();
     }
 
-    fn end(&self) -> bool{
+    fn has_finished(&mut self) -> bool{
         println!("Ending {}...", self.name);
-        return (self.conclude)();
+        return (self.has_finished)();
+    }
+
+    fn end(&mut self){
+        println!("Ending {}...", self.name);
+        (self.conclude)();
     }
 }
 
@@ -66,7 +78,7 @@ impl TaskHandler {
         TaskHandler { tasks: Vec::new() }
     }
 
-    pub fn add_task(&mut self, task: Box<dyn Task>) {
+    pub fn add_task(&mut self, mut task: Box<dyn Task>) {
         task.initialize();
         self.tasks.push(task);
     }
@@ -76,14 +88,23 @@ impl TaskHandler {
             task.execute();
         }
 
-        self.tasks.retain(|task| {
-            !task.end()
-        });
+        // self.tasks.retain_mut(|task| {
+        //     // get the task's end function
+        //     !task.end()
+        // });
+
+        for i in 0..self.tasks.len() {
+            if self.tasks[i].has_finished() {
+                self.tasks[i].end();
+                self.tasks.remove(i);
+            }
+        }
     }
 
     pub fn shut_down(&mut self) {
-        for task in self.tasks.iter_mut() {
-            task.end();
+        for i in 0..self.tasks.len() {
+            self.tasks[i].end();
+            self.tasks.remove(i);
         }
     }
 }
