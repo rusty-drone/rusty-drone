@@ -12,7 +12,7 @@ impl SequentialTask {
     }
 }
 
-impl Task for  SequentialTask{
+impl Task for SequentialTask{
     fn initialize(&mut self) {
         self.first.initialize();
     }

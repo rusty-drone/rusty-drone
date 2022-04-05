@@ -1,11 +1,16 @@
+use std::{time::Duration, thread};
+
 use crate::tasks::task::Task;
 pub struct TaskHandler {
     pub tasks: Vec<Box<dyn Task>>,
+    delay: Duration,
+    elapsed_time: Duration,
+    num_loops: u128,
 }
 
 impl TaskHandler {
-    pub fn new() -> Self {
-        TaskHandler { tasks: Vec::new() }
+    pub fn new(delay: Duration) -> Self {
+        TaskHandler { tasks: Vec::new(), delay, elapsed_time: Duration::from_millis(0), num_loops: 0 }
     }
 
     pub fn add_task(&mut self, mut task: Box<dyn Task>){
@@ -14,6 +19,8 @@ impl TaskHandler {
     }
 
     pub fn run(&mut self) {
+
+        let start_time = std::time::Instant::now();
 
         let mut idx = 0 as usize;
 
@@ -30,6 +37,15 @@ impl TaskHandler {
         for task in self.tasks.iter_mut() {
             task.execute();
         }
+
+        thread::sleep(self.delay);
+
+        let end_time = std::time::Instant::now();
+
+        let elapsed = end_time.duration_since(start_time);
+
+        self.elapsed_time += elapsed;
+        self.num_loops += 1;
     }
 
     pub fn shut_down(&mut self) {
@@ -39,5 +55,7 @@ impl TaskHandler {
             b.end();
             self.tasks.remove(i);
         }
+
+        println!("Average loop time: {}", self.elapsed_time.as_millis() / self.num_loops);
     }
 }
