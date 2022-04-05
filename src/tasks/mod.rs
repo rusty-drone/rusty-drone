@@ -80,6 +80,9 @@ impl TaskHandler {
 
     pub fn run(&mut self) {
 
+        // TODO: this is totally broken lol... 
+        // after task is removed index is ahead by one
+        // need to modify this
         for i in 0..self.tasks.len() {
             let b = &mut self.tasks[i];
             if b.has_finished() {
