@@ -1,5 +1,5 @@
 use std::{ops::{AddAssign, Add, Sub, Mul, Div}};
-use crate::{streams::{Stream, SlideStream, CustomStream}, time::{zip_with_time, TimeStamped}};
+use crate::{streams::{Stream}};
 
 pub fn error<O: AddAssign + Add + Sub + Mul + Div + Copy, S: Stream<T = O>, P: Stream<T = O>> (s: S, p: P) -> 
 impl Stream<T = <O as Sub>::Output>

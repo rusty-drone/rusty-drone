@@ -1,4 +1,4 @@
-use std::{ops::{AddAssign, Add, Sub, Mul, Div}, iter::Cloned};
+use std::{ops::{AddAssign, Add, Sub, Mul, Div}};
 pub trait Stream : Clone {
     type T: AddAssign + Add + Sub + Mul + Div + Copy;
     type Out: AddAssign + Add + Sub + Mul + Div + Copy;
