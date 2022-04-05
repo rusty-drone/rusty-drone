@@ -1,4 +1,4 @@
-use std::borrow::{Borrow, BorrowMut};
+use std::{borrow::{Borrow, BorrowMut}, cell::RefCell};
 pub trait Task { 
     fn initialize(&mut self);
     fn execute(&mut self);
@@ -6,21 +6,19 @@ pub trait Task {
     fn has_finished(&mut self) -> bool;
 }
 
-#[derive(Clone)]
 pub struct InfiniteTask<F: FnMut()> {
     f: F,
-    name: String,
 }
 
 impl <F: FnMut()> InfiniteTask<F> {
-    pub fn new(f: F, name: String) -> Self {
-        InfiniteTask { f, name }
+    pub fn new(f: F) -> Self {
+        InfiniteTask { f }
     }
 }
 
-impl <F: FnMut()> Task for InfiniteTask<F> {
+impl <F: FnMut()> Task for InfiniteTask<F>{
     fn initialize(&mut self) {
-        println!("Initializing {}...", self.name);
+        println!("Initializing...");
     }
 
     fn execute(&mut self) {
@@ -70,41 +68,45 @@ impl <F: FnMut(), P: FnMut(), E: FnMut() -> bool> Task for FiniteTask<F, P, E> {
 }
 
 pub struct TaskHandler {
-    tasks: Vec<Box<dyn Task>>,
+    pub infinite_tasks: Vec<Box<dyn Task>>,
 }
 
 impl TaskHandler {
     pub fn new() -> Self {
-        TaskHandler { tasks: Vec::new() }
+        TaskHandler { infinite_tasks: Vec::new() }
     }
 
-    pub fn add_task(&mut self, mut task: Box<dyn Task>) {
+    pub fn add_task(&mut self, mut task: Box<dyn Task>){
         task.initialize();
-        self.tasks.push(task);
+        self.infinite_tasks.push(task);
     }
 
     pub fn run(&mut self) {
-        for task in self.tasks.iter_mut() {
+        for task in self.infinite_tasks.iter_mut() {
+            // initialize task
             task.execute();
         }
 
-        // self.tasks.retain_mut(|task| {
-        //     // get the task's end function
-        //     !task.end()
-        // });
+    //     // self.tasks.retain_mut(|task| {
+    //     //     // get the task's end function
+    //     //     !task.end()
+    //     // });
 
-        for i in 0..self.tasks.len() {
-            if self.tasks[i].has_finished() {
-                self.tasks[i].end();
-                self.tasks.remove(i);
+        for i in 0..self.infinite_tasks.len() {
+            let b = &mut self.infinite_tasks[i];
+            if b.has_finished() {
+                b.end();
+                self.infinite_tasks.remove(i);
             }
         }
     }
 
     pub fn shut_down(&mut self) {
-        for i in 0..self.tasks.len() {
-            self.tasks[i].end();
-            self.tasks.remove(i);
+        println!("Shutting down...");
+        for i in 0..self.infinite_tasks.len() {
+            let b = &mut self.infinite_tasks[i];
+            b.end();
+            self.infinite_tasks.remove(i);
         }
     }
 }
