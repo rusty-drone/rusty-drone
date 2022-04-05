@@ -4,7 +4,11 @@ use rust_architecture::tasks::sequential_task::SequentialTask;
 use core::time;
 use std::{thread, rc::Rc, cell::RefCell};
 
+use rust_architecture::streams::constant_stream::ConstantStream;
+
 fn main() {
+
+    let s = ConstantStream::new(5);
 
     let original = Rc::new(RefCell::new(0));
     let c1 = Rc::clone(&original);
@@ -16,7 +20,6 @@ fn main() {
     let task = FiniteTask::new(
      move || {
         *c1.borrow_mut() += 1;
-        println!("{}", *c1.borrow_mut());
     }, 
 
     || {},
@@ -32,7 +35,7 @@ fn main() {
     let task2 = FiniteTask::new(
         move || {
            *o1.borrow_mut() += 1;
-           println!("{}", *o1.borrow_mut());
+           println!("{}", s.value);
        }, 
    
        || {},

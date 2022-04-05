@@ -1,6 +1,7 @@
 use std::ops::{AddAssign, Add, Sub, Mul, Div};
 
 use crate::streams::*;
+use crate::streams::stream::Stream;
 
 #[derive(Debug, Copy, Clone)]
 pub struct TimeStamped<T, O> where T: AddAssign + Add + Sub + Mul + Div, O: AddAssign + Add + Sub + Mul + Div {
