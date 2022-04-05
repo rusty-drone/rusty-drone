@@ -34,7 +34,7 @@ impl Task for  SequentialTask{
     }
 
     fn end(&mut self) {
-        println!("Sequential Task successfully completed");
+        self.second.end();
     }
 
     fn has_finished(&mut self) -> bool {

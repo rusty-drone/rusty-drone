@@ -15,26 +15,21 @@ impl TaskHandler {
 
     pub fn run(&mut self) {
 
-        // TODO: this is totally broken lol... 
-        // after task is removed index is ahead by one
-        // need to modify this
-        for i in 0..self.tasks.len() {
-            let b = &mut self.tasks[i];
+        let mut idx = 0 as usize;
+
+        while  idx < self.tasks.len() {
+            let b = &mut self.tasks[idx];
             if b.has_finished() {
                 b.end();
-                self.tasks.remove(i);
+                self.tasks.remove(idx);
+                continue;
             }
+            idx = idx + 1;
         }
 
         for task in self.tasks.iter_mut() {
-            // initialize task
             task.execute();
         }
-
-        // self.tasks.retain_mut(|task| {
-        //     // get the task's end function
-        //     !task.has_finished()
-        // });
     }
 
     pub fn shut_down(&mut self) {
