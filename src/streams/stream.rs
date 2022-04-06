@@ -13,12 +13,12 @@ pub trait Stream : Clone {
         ConstantStream { value }
     }
 
-    fn map<'a, Out: AddAssign + Add + Sub + Mul + Div + Copy, F: Fn(Self::T) -> Out>(self, f: F) -> MapStream<Self, Out, F> where Self: Sized,
+    fn map<'a, Out: AddAssign + Add + Sub + Mul + Div + Copy, F: FnMut(Self::T) -> Out>(self, f: F) -> MapStream<Self, Out, F> where Self: Sized,
     {
         MapStream { parent: self, f }
     }
 
-    fn zip<Out: AddAssign + Add + Sub + Mul + Div + Copy, S: Stream, F: Fn(Self::T, S::T) -> Out>(self, other: S, f: F) -> ZipStream<Self, S, Out, F> where Self: Sized,
+    fn zip<Out: AddAssign + Add + Sub + Mul + Div + Copy, S: Stream, F: FnMut(Self::T, S::T) -> Out>(self, other: S, f: F) -> ZipStream<Self, S, Out, F> where Self: Sized,
     {
         ZipStream { s: self, p: other, f }
     }

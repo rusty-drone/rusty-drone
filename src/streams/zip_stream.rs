@@ -1,13 +1,13 @@
 use std::{ops::{AddAssign, Add, Sub, Mul, Div}};
 use crate::streams::stream::Stream;
 // used to synthesize the output between to streams
-pub struct ZipStream<S: Stream, P: Stream, Out: AddAssign + Add + Sub + Mul + Div + Copy, F: Fn(S::T, P::T) -> Out> {
+pub struct ZipStream<S: Stream, P: Stream, Out: AddAssign + Add + Sub + Mul + Div + Copy, F: FnMut(S::T, P::T) -> Out> {
     pub s: S, //parent 1
     pub p: P, //parent 2
     pub f: F,
 }
 
-impl<S: Stream, P: Stream, Out: AddAssign + Add + Sub + Mul + Div + Copy, F: Fn(S::T, P::T) -> Out> Stream for ZipStream<S, P, Out, F>  where F: Clone{
+impl<S: Stream, P: Stream, Out: AddAssign + Add + Sub + Mul + Div + Copy, F: FnMut(S::T, P::T) -> Out> Stream for ZipStream<S, P, Out, F>  where F: Clone{
     type T = Out;
     type Out = Out;
 
@@ -16,7 +16,7 @@ impl<S: Stream, P: Stream, Out: AddAssign + Add + Sub + Mul + Div + Copy, F: Fn(
     }
 }
 
-impl<S: Stream, P: Stream, Out: AddAssign + Add + Sub + Mul + Div + Copy, F: Fn(S::T, P::T) -> Out> Clone for ZipStream<S, P, Out, F>  where F: Clone{
+impl<S: Stream, P: Stream, Out: AddAssign + Add + Sub + Mul + Div + Copy, F: FnMut(S::T, P::T) -> Out> Clone for ZipStream<S, P, Out, F>  where F: Clone{
     fn clone(&self) -> Self {
         ZipStream { s: self.s.clone(), p: self.p.clone(), f: self.f.clone() }
     }
