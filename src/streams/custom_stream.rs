@@ -1,5 +1,7 @@
 use std::{ops::{AddAssign, Add, Sub, Mul, Div}};
-use crate::streams::stream::Stream;
+
+use super::stream::Stream;
+
 // used for sensor readings or other 3rd party data
 #[derive(Copy)]
 pub struct CustomStream<Out: AddAssign + Add + Sub + Mul + Div + Copy, F: FnMut() -> Out>{
