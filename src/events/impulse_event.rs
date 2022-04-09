@@ -1,6 +1,4 @@
-pub trait Event {
-    fn fired(&mut self) -> bool;
-}
+use crate::events::Event;
 
 /**
  * Used to initialize more events. Is a "one time" event with no running phase.
