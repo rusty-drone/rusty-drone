@@ -2,7 +2,10 @@ use std::{time::Duration, thread};
 
 use super::Event;
 
-// TODO: Switch from Task Handler to Event Handler
+/**
+ * Main event loop manager. Used to add tasks, update all tasks, etc.
+ * also records loop times for debugging.
+ */
 pub struct EventHandler {
     listeners: Vec<Box<dyn Event>>,
     delay: Duration,

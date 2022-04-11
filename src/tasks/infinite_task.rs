@@ -1,4 +1,7 @@
 use crate::tasks::task::Task;
+/**
+ * continuously running task.
+ */
 pub struct InfiniteTask<F: FnMut()> {
     f: F,
 }

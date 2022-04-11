@@ -1,4 +1,9 @@
 use crate::{events::Event, tasks::task::Task};
+/**
+ * Has a vector of `ImpulseEvent` which start up the `task`. When fired, 
+ * if provided it executes an `action` and in the meantime continues to 
+ * manage the `task`.
+ */
 pub struct ContinuousEvent<A: FnMut()> {
     listeners: Vec<Box<dyn Event>>,
     action: A,
