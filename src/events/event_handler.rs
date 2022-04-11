@@ -28,6 +28,7 @@ impl EventHandler {
             let b = &mut self.listeners[idx];
             if b.fired() {
                 self.listeners.remove(idx);
+                println!("Removed index {} from listeners", idx);
                 continue;
             }
             idx = idx + 1;
