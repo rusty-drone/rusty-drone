@@ -1,5 +1,9 @@
 use crate::tasks::task::Task;
 
+/**
+ * Task that is initialized, and repeated executes until it has 
+ * finished, at which point it is ended
+ */
 #[derive(Clone)]
 pub struct FiniteTask<F: FnMut(), P: FnMut(), C: FnMut(), E: FnMut() -> bool> {
     pub f: F,
@@ -15,7 +19,7 @@ impl <F: FnMut(), P: FnMut(), C: FnMut(), E: FnMut() -> bool> FiniteTask<F, P, C
 
     //TODO: implement `then` to be able to easily generate sequential tasks
     // pub fn then(&self, task: Box<dyn Task>) -> SequentialTask{
-    //     SequentialTask::new(Box::new(&self), task)
+    //     SequentialTask::new(Box::new(&self as &dyn Task), task)
     // }
 }
 

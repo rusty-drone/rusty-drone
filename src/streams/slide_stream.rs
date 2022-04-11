@@ -1,5 +1,8 @@
 use std::{ops::{AddAssign, Add, Sub, Mul, Div}};
 use crate::streams::stream::Stream;
+/**
+ * Stores previous few values too, can be used for averaging or integrating.
+ */
 pub struct SlideStream<S: Stream, T: AddAssign + Add + Sub + Mul + Div + Copy> {
     pub parent: S,
     data: Vec<T>,

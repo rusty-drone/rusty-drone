@@ -1,6 +1,8 @@
 use std::{ops::{AddAssign, Add, Sub, Mul, Div}};
 use crate::streams::stream::Stream;
-// used to synthesize the output between to streams
+/**
+ * Combines two Streams with a custom function.
+ */
 pub struct ZipStream<S: Stream, P: Stream, Out: AddAssign + Add + Sub + Mul + Div + Copy, F: Fn(S::T, P::T) -> Out> {
     pub s: S, //parent 1
     pub p: P, //parent 2
