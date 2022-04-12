@@ -1,5 +1,8 @@
 use crate::tasks::task::Task;
 
+/**
+ * Two tasks that are run simultaneously.
+ */
 pub struct ParallelTask {
     pub first: Box<dyn Task>,
     pub second: Box<dyn Task>,

@@ -1,5 +1,9 @@
 use crate::tasks::task::Task;
 
+/**
+ * Once first task is finished, it's ended and second task has begun. 
+ * Runs tasks one after another.
+ */
 pub struct SequentialTask{
     pub first: Box<dyn Task>,
     pub second: Box<dyn Task>,

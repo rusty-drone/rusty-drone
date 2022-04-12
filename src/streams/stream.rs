@@ -3,6 +3,10 @@ use crate::streams::constant_stream::ConstantStream;
 use crate::streams::map_stream::MapStream;
 use crate::streams::zip_stream::ZipStream;
 
+/**
+ * Generic implementation of `Stream`. Used for all input and output
+ * data sources.
+ */
 pub trait Stream : Clone {
     type T: AddAssign + Add + Sub + Mul + Div + Copy;
     type Out: AddAssign + Add + Sub + Mul + Div + Copy;
