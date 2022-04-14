@@ -10,17 +10,11 @@ pub struct ZipStream<S: Stream, P: Stream, Out: AddAssign + Add + Sub + Mul + Di
     pub f: F,
 }
 
-impl<S: Stream, P: Stream, Out: AddAssign + Add + Sub + Mul + Div + Copy, F: FnMut(S::T, P::T) -> Out> Stream for ZipStream<S, P, Out, F>  where F: Clone{
+impl<S: Stream, P: Stream, Out: AddAssign + Add + Sub + Mul + Div + Copy, F: FnMut(S::T, P::T) -> Out> Stream for ZipStream<S, P, Out, F>{
     type T = Out;
     type Out = Out;
 
     fn next(&mut self) -> Out {
         (self.f)(self.s.next(), self.p.next())
-    }
-}
-
-impl<S: Stream, P: Stream, Out: AddAssign + Add + Sub + Mul + Div + Copy, F: FnMut(S::T, P::T) -> Out> Clone for ZipStream<S, P, Out, F>  where F: Clone{
-    fn clone(&self) -> Self {
-        ZipStream { s: self.s.clone(), p: self.p.clone(), f: self.f.clone() }
     }
 }

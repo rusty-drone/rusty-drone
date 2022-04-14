@@ -20,13 +20,6 @@ impl<S: Stream, T: AddAssign + Add + Sub + Mul + Div + Copy> Stream for SlideStr
     }
 }
 
-//impl copy for slide stream
-impl<S: Stream, T: AddAssign + Add + Sub + Mul + Div + Copy> Clone for SlideStream<S, T> {
-    fn clone(&self) -> Self {
-        SlideStream { parent: self.parent.clone(), data: self.data.clone() }
-    }
-}
-
 impl<S: Stream, T: AddAssign + Add + Sub + Mul + Div + Copy> SlideStream<S, T> where S: Stream<T = T> {
     pub fn new(parent: S, size: usize, zero_value: T) -> Self {
         SlideStream { parent, data: vec![zero_value; size] }

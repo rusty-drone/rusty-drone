@@ -9,14 +9,7 @@ pub struct MapStream<P: Stream, Out: AddAssign + Add + Sub + Mul + Div + Copy, F
     pub f: F,
 }
 
-//impl clone for map stream
-impl<P: Stream, Out: AddAssign + Add + Sub + Mul + Div + Copy, F: FnMut(P::T) -> Out> Clone for MapStream<P, Out, F>  where F: Clone{
-    fn clone(&self) -> Self {
-        MapStream { parent: self.parent.clone(), f: self.f.clone() }
-    }
-}
-
-impl<P: Stream, Out: AddAssign + Add + Sub + Mul + Div + Copy, F: FnMut(P::T) -> Out> Stream for MapStream<P, Out, F>  where F: Clone{
+impl<P: Stream, Out: AddAssign + Add + Sub + Mul + Div + Copy, F: FnMut(P::T) -> Out> Stream for MapStream<P, Out, F>{
     type T = Out;
     type Out = Out;
 
