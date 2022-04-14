@@ -10,7 +10,7 @@ pub struct MapStream<P: Stream, Out: StreamOps, F: FnMut(P::T) -> Out> {
     pub f: F,
 }
 
-impl<P: Stream, Out: StreamOps, F: FnMut(P::T) -> Out> Stream for MapStream<P, Out, F>{
+impl<P: Stream, Out: StreamOps, F: FnMut(P::T) -> Out> Stream for MapStream<P, Out, F> where F: Clone{
     type T = Out;
     type Out = Out;
 

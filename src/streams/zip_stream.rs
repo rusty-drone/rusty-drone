@@ -10,7 +10,7 @@ pub struct ZipStream<S: Stream, P: Stream, Out: StreamOps, F: FnMut(S::T, P::T) 
     pub f: F,
 }
 
-impl<S: Stream, P: Stream, Out: StreamOps, F: FnMut(S::T, P::T) -> Out> Stream for ZipStream<S, P, Out, F>  where F: Clone{
+impl<S: Stream, P: Stream, Out: StreamOps, F: FnMut(S::T, P::T) -> Out> Stream for ZipStream<S, P, Out, F>{
     type T = Out;
     type Out = Out;
 

@@ -15,7 +15,7 @@ impl<Out: StreamOps, F: FnMut() -> Out> CustomStream<Out, F> {
     }
 }
 
-impl<Out: StreamOps, F: FnMut() -> Out> Stream for CustomStream<Out, F>{
+impl<Out: StreamOps, F: FnMut() -> Out> Stream for CustomStream<Out, F> where F: Clone{
     type T = Out;
     type Out = Out;
 
