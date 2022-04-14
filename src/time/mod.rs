@@ -121,10 +121,8 @@ impl <T, O> Num for TimeStamped<T, O> where T: StreamOps, O: StreamOps {
 }
 
 
-pub fn zip_with_time<T, D: Stream>(time: D, data: D) -> ZipStream<D, D, TimeStamped<D::T, D::T>, impl Fn(D::T, D::T) -> TimeStamped<D::T, D::T>> where T: StreamOps{
+pub fn zip_with_time<T, D: Stream>(time: D, data: D) -> ZipStream<D, D, TimeStamped<D::T, D::T>, impl Fn(D::T, D::T) -> TimeStamped<D::T, D::T> + Copy> where T: StreamOps{
     //returns a zip stream that zips a timestamped
     let f = |x: D::T, y: D::T| {TimeStamped{value: x, time: y}};
     return ZipStream {s: data, p: time, f};
-
-    // let s = data.zip(time, |x: D::T, y: S::T| {TimeStamped{value: x, time: y}} as fn(D::T, S::T) -> TimeStamped<D::T, S::T>);
 }
