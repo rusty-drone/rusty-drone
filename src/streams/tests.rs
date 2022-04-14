@@ -1,14 +1,16 @@
 #[cfg(test)]
 mod streams_tests{
 
-    use crate::streams::{constant_stream::ConstantStream, stream::Stream, custom_stream::CustomStream};
+    use std::{cell::RefCell, rc::Rc};
+
+    use crate::streams::{constant_stream::ConstantStream, stream::{Stream}, custom_stream::CustomStream};
 
     #[test]
     fn constant_stream() {
         let mut s = ConstantStream::new(5.0);
         assert_eq!(s.next(), 5.0);
 
-        let mut s = ConstantStream::new(3);
+        let mut s = ConstantStream::<i32>::new(3);
         assert_eq!(s.next(), 3);
     }
 
@@ -25,13 +27,14 @@ mod streams_tests{
 
     #[test]
     fn zip_stream() {
-        let c1 = ConstantStream::new(2.0);
-        let c2 = ConstantStream::new(3.0);
 
-        let mut z = c1.zip(c2, |x, y| {x + y});
+        let c1 = Rc::new(RefCell::new(ConstantStream::<f64>::new(2.0)));
+        let c2 = ConstantStream::<f64>::new(3.0);
+
+        let mut z = (*c1.borrow_mut()).zip(c2, |x, y| {x + y});
         assert_eq!(z.next(), 5.0);
 
-        let mut z2 = z.zip(c1, |x, y| x * y);
+        let mut z2 = z.zip(*c1.borrow_mut(), |x, y| x * y);
         assert_eq!(z2.next(), 10.0);
     }
 

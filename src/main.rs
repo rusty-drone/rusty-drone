@@ -1,5 +1,6 @@
 use rust_architecture::{events::{event_handler::EventHandler}};
 use core::time;
+extern crate num_traits;
 
 fn main() {
 

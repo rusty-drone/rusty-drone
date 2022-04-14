@@ -1,21 +1,22 @@
-use std::{ops::{AddAssign, Add, Sub, Mul, Div}};
 use crate::streams::stream::Stream;
-#[derive(Copy, Clone)]
+use crate::streams::stream::StreamOps;
+
 
 /**
  * returns only one value, can be used for PID gains or other constants
  */
-pub struct ConstantStream<T: AddAssign + Add + Sub + Mul + Div + Copy> {
+#[derive(Copy, Clone)]
+pub struct ConstantStream<T: StreamOps> {
    pub value: T,
 }
 
-impl<T: AddAssign + Add + Sub + Mul + Div + Copy> ConstantStream<T> {
+impl<T: StreamOps> ConstantStream<T> {
     pub fn new(value: T) -> Self {
         ConstantStream { value }
     }
 }
 
-impl<T: Copy + AddAssign + Sub + Mul + Add + Div> Stream for ConstantStream<T> {
+impl<T: StreamOps> Stream for ConstantStream<T> {
     type T = T;
     type Out = T;
 
