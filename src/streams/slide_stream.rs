@@ -1,14 +1,15 @@
-use std::{ops::{AddAssign, Add, Sub, Mul, Div}};
+use crate::streams::stream::StreamOps;
 use crate::streams::stream::Stream;
 /**
  * Stores previous few values too, can be used for averaging or integrating.
  */
-pub struct SlideStream<S: Stream, T: AddAssign + Add + Sub + Mul + Div + Copy> {
+#[derive(Clone)]
+pub struct SlideStream<S: Stream, T: StreamOps> {
     pub parent: S,
     data: Vec<T>,
 }
 
-impl<S: Stream, T: AddAssign + Add + Sub + Mul + Div + Copy> Stream for SlideStream<S, T> where S: Stream<T = T> {
+impl<S: Stream, T: StreamOps> Stream for SlideStream<S, T> where S: Stream<T = T> {
     type T = T;
     type Out = T;
 
@@ -20,14 +21,7 @@ impl<S: Stream, T: AddAssign + Add + Sub + Mul + Div + Copy> Stream for SlideStr
     }
 }
 
-//impl copy for slide stream
-impl<S: Stream, T: AddAssign + Add + Sub + Mul + Div + Copy> Clone for SlideStream<S, T> {
-    fn clone(&self) -> Self {
-        SlideStream { parent: self.parent.clone(), data: self.data.clone() }
-    }
-}
-
-impl<S: Stream, T: AddAssign + Add + Sub + Mul + Div + Copy> SlideStream<S, T> where S: Stream<T = T> {
+impl<S: Stream, T: StreamOps> SlideStream<S, T> where S: Stream<T = T> {
     pub fn new(parent: S, size: usize, zero_value: T) -> Self {
         SlideStream { parent, data: vec![zero_value; size] }
     }
