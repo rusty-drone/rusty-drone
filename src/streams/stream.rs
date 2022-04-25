@@ -30,7 +30,7 @@ pub trait Stream : Sized {
         MapStream { parent: self, f }
     }
 
-    fn zip<S: Stream, O: StreamOps, F: FnMut(Self::T, S::T) -> O>(self, other: S, f: F) -> ZipStream<Self, S, O, F> where Self: Sized,
+    fn zip<S: Stream, O: StreamOps, F: FnMut(Self::T, S::T) -> O>(self, other: S, f: F) -> ZipStream<Self, S, O, F> where Self: Sized, F: Copy,
     {
         ZipStream { s: self, p: other, f }
     }

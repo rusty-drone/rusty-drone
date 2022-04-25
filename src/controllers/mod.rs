@@ -39,17 +39,17 @@
 // //     out
 // // }   
 
-use std::{cell::RefCell, rc::Rc};
+// use std::{cell::RefCell, rc::Rc};
 
-use crate::{streams::{stream::{StreamOps, Stream}, slide_stream::SlideStream, constant_stream::ConstantStream}, time::{zip_with_time, TimeStamped}};
+// use crate::{streams::{stream::{StreamOps, Stream}, slide_stream::SlideStream, constant_stream::ConstantStream}, time::{zip_with_time, TimeStamped}};
 
-pub fn error<O: StreamOps, S: Stream>(s: S, s2: S) -> impl Stream{
-    s.zip(s2, |x: S::T, y: S::T| {y - x})
-}
+// pub fn error<O: StreamOps, S: Stream>(s: S, s2: S) -> impl Stream{
+//     s.zip(s2, |x: S::T, y: S::T| {y - x})
+// }
 
-pub fn proportional<O: StreamOps, S: Stream<T = O>>(s: S, p: O) -> impl Stream{
-    s.map(move |x: S::T| {x * p})
-}
+// pub fn proportional<O: StreamOps, S: Stream<T = O>>(s: S, p: O) -> impl Stream{
+//     s.map(move |x: S::T| {x * p})
+// }
 
 // pub fn derivative<O: StreamOps, S: Stream<T = O>>(s: S, time: S, d: O) -> impl Stream{
 //     let mut zip = zip_with_time::<O, S>(time, s);
