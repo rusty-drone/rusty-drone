@@ -40,3 +40,14 @@
 //         }
 //     }
 // }
+
+use crate::streams::stream::{Stream};
+
+// current issue: controller cannot be any type since `S` is immediatly constrained to default controller.
+// adding other generic arguments won't help since they too will be immediatly constrained to what was provided
+pub struct PureComponent<S: Stream, F: FnMut()> {
+    default_controller: Box<S>,
+    controller: Box<S>,
+    is_default: bool,
+    f: F,
+}
