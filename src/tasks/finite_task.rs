@@ -17,6 +17,11 @@ impl <F: FnMut(), P: FnMut(), C: FnMut(), E: FnMut() -> bool> FiniteTask<F, P, C
         FiniteTask { f, prelude, conclude, has_finished}
     }
 
+    // pub fn new2(f: F, has_finished: E) -> Self {
+    //     // let prelude: P = || {};
+    //     // FiniteTask::new(f, prelude, || {}, has_finished)
+    // }
+
     //TODO: implement `then` to be able to easily generate sequential tasks
     // pub fn then(&self, task: Box<dyn Task>) -> SequentialTask{
     //     SequentialTask::new(Box::new(&self as &dyn Task), task)

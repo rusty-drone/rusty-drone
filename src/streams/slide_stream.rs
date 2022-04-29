@@ -3,7 +3,6 @@ use crate::streams::stream::Stream;
 /**
  * Stores previous few values too, can be used for averaging or integrating.
  */
-#[derive(Clone)]
 pub struct SlideStream<S: Stream, T: StreamOps> {
     pub parent: S,
     data: Vec<T>,

@@ -15,13 +15,13 @@ impl StreamOps for i64 {}
  * Generic implementation of `Stream`. Used for all input and output
  * data sources.
  */
-pub trait Stream : Sized {
+pub trait Stream {
     type T: StreamOps;
     type Out: StreamOps;
 
     fn next(&mut self) -> Self::T;
 
-    fn constant(value: Self::T) -> ConstantStream<Self::T> {
+    fn constant(value: Self::T) -> ConstantStream<Self::T> where Self: Sized,{
         ConstantStream { value }
     }
 

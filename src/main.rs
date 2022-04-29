@@ -22,6 +22,11 @@ fn main() {
 
     loop {
         handler.update_events();
+
+        if Instant::now().duration_since(initial).as_millis() > 5000 {
+            handler.shut_down();
+            break;
+        }
     }
 
 }

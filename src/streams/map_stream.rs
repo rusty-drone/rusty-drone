@@ -4,7 +4,6 @@ use crate::streams::stream::Stream;
 /**
  * Maps a `Stream` through a function.
  */
-#[derive(Copy, Clone)]
 pub struct MapStream<P: Stream, Out: StreamOps, F: FnMut(P::T) -> Out> {
     pub parent: P,
     pub f: F,
