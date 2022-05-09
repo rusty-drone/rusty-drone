@@ -1,29 +1,32 @@
-use std::ops::{AddAssign, Add, Sub, Mul, Div};
-
-use crate::streams::stream::Stream;
+use crate::streams::stream::{Stream, StreamOps};
 
 use super::component::Component;
 
-pub struct PureComponent<O, S, F: FnMut(O)> where O: AddAssign + Add + Sub + Mul + Div + Copy, S: Stream<T = O> {
-    default_controller: S,
-    controller: S,
+// // current issue: controller cannot be any type since `S` is immediatly constrained to default controller.
+// // adding other generic arguments won't help since they too will be immediatly constrained to what was provided
+pub struct PureComponent<F: FnMut(In), In: StreamOps, O: StreamOps> {
+    default_controller: Box<dyn Stream<T = In, Out = O>>,
+    controller: Box<dyn Stream<T = In, Out = O>>,
     is_default: bool,
     f: F,
 }
 
-impl <O: AddAssign + Add + Sub + Mul + Div + Copy, S: Stream<T = O>, F: FnMut(O)> PureComponent<O, S, F> where S: Copy {
-    pub fn new(default_controller: S, f: F) -> Self {
-        PureComponent {
+impl<F: FnMut(In), In: StreamOps, O: StreamOps> PureComponent<F, In, O> {
+    pub fn new(default_controller: Box<dyn Stream<T = In, Out = O>>, controller: Box<dyn Stream<T = In, Out = O>>, f: F) -> PureComponent<F, In, O> {
+        let mut out = PureComponent {
             default_controller,
-            controller: default_controller.clone(),
+            controller,
             is_default: true,
             f
-        }
+        };
+        out.reset_to_default();
+        out
     }
 }
 
-impl <O: AddAssign + Add + Sub + Mul + Div + Copy, S: Stream<T = O>, F: FnMut(O)> Component<O, S> for PureComponent<O, S, F> where S: Copy {
-    fn set_controller(&mut self, controller: S) {
+
+impl<F: FnMut(In), In: StreamOps, O: StreamOps> Component<In, O> for PureComponent<F, In, O> {
+    fn set_controller(&mut self, controller: Box<dyn Stream<T = In, Out = O>>) {
         self.controller = controller;
         self.is_default = false;
     }

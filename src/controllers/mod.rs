@@ -43,21 +43,41 @@
 
 // use crate::{streams::{stream::{StreamOps, Stream}, slide_stream::SlideStream, constant_stream::ConstantStream}, time::{zip_with_time, TimeStamped}};
 
+use std::{cell::RefCell, rc::Rc};
+
 // pub fn error<O: StreamOps, S: Stream>(s: S, s2: S) -> impl Stream{
 //     s.zip(s2, |x: S::T, y: S::T| {y - x})
 // }
+use crate::{streams::{stream::{StreamOps, Stream}, slide_stream::SlideStream, constant_stream::ConstantStream}, time::{zip_with_time, TimeStamped}};
 
-// pub fn proportional<O: StreamOps, S: Stream<T = O>>(s: S, p: O) -> impl Stream{
-//     s.map(move |x: S::T| {x * p})
-// }
+pub fn proportional<O: StreamOps, S: Stream<T = O>>(s: S, p: O) -> impl Stream{
+    s.map(move |x: S::T| {x * p})
+}
 
-// pub fn derivative<O: StreamOps, S: Stream<T = O>>(s: S, time: S, d: O) -> impl Stream{
+// pub fn derivative<O: StreamOps, S: Stream<T = O>>(s: S, time: S, d: O){
 //     let mut zip = zip_with_time::<O, S>(time, s);
 
 //     let zip_ref = Rc::new(RefCell::new(zip));
 //     let zip_cop = Rc::clone(&zip_ref);
 
-//     let mut slide = SlideStream::new(*zip_ref.borrow_mut(), 2, zip.next());
+//     // let mut slide = SlideStream::new(*zip_ref.borrow_mut(), 2, zip.next());
+//     let mut slide = Rc::new(RefCell::new(SlideStream::new(zip_cop, 2, (*zip_ref.borrow_mut()).next())));
+//     let mut slide_copy = Rc::clone(&slide);
 
-//     ConstantStream::new(5.0)
+//     let borrow = *slide_copy.borrow_mut();
+
+//     let out = borrow.map(|next| {
+//         let borrow = borrow;
+//         let change_in_data = next.value - borrow.get_data()[borrow.get_size() - 2].value;
+//         let change_in_time = next.time - borrow.get_data()[borrow.get_size() - 2].time;
+
+//         let derivative = change_in_data / change_in_time;   
+
+//         let d_val = d * derivative;
+
+//         TimeStamped {
+//             time: next.time,
+//             value: d_val
+//         }
+//     });
 // }   
