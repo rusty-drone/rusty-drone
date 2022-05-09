@@ -13,12 +13,14 @@ pub struct PureComponent<F: FnMut(In), In: StreamOps, O: StreamOps> {
 
 impl<F: FnMut(In), In: StreamOps, O: StreamOps> PureComponent<F, In, O> {
     pub fn new(default_controller: Box<dyn Stream<T = In, Out = O>>, controller: Box<dyn Stream<T = In, Out = O>>, f: F) -> PureComponent<F, In, O> {
-        PureComponent {
+        let mut out = PureComponent {
             default_controller,
-            controller: controller,
+            controller,
             is_default: true,
             f
-        }
+        };
+        out.reset_to_default();
+        out
     }
 }
 
