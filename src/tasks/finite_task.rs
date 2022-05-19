@@ -4,17 +4,22 @@ use crate::tasks::task::Task;
  * Task that is initialized, and repeated executes until it has 
  * finished, at which point it is ended
  */
+
+ /*
+ 1. add callback to prelude
+ 2. don't need `f` since tasks only assign streams
+ */
 #[derive(Clone)]
-pub struct FiniteTask<F: FnMut(), P: FnMut(), C: FnMut(), E: FnMut() -> bool> {
-    pub f: F,
-    pub prelude: P,
-    pub conclude: C,
+pub struct FiniteTask<P: FnMut(), C: FnMut(), E: FnMut() -> bool> {
+    pub on_start: P,
+    pub on_finish: C,
     pub has_finished: E,
+    initialized: bool,
 }
 
-impl <F: FnMut(), P: FnMut(), C: FnMut(), E: FnMut() -> bool> FiniteTask<F, P, C, E> {
-    pub fn new(f: F, prelude: P, conclude: C, has_finished: E) -> Self {
-        FiniteTask { f, prelude, conclude, has_finished}
+impl <P: FnMut(), C: FnMut(), E: FnMut() -> bool> FiniteTask<P, C, E> {
+    pub fn new(on_start: P, on_finish: C, has_finished: E) -> Self {
+        FiniteTask {on_start: on_start, on_finish: on_finish, has_finished, initialized: false}
     }
 
     // pub fn new2(f: F, has_finished: E) -> Self {
@@ -28,13 +33,12 @@ impl <F: FnMut(), P: FnMut(), C: FnMut(), E: FnMut() -> bool> FiniteTask<F, P, C
     // }
 }
 
-impl <F: FnMut(), P: FnMut(), C: FnMut(), E: FnMut() -> bool> Task for FiniteTask<F, P, C, E> {
+impl <P: FnMut(), C: FnMut(), E: FnMut() -> bool> Task for FiniteTask<P, C, E> {
     fn initialize(&mut self) {
-        (self.prelude)();
-    }
-
-    fn execute(&mut self) {
-        (self.f)();
+        if !self.initialized {
+            (self.on_start)();
+            self.initialized = true;
+        }
     }
 
     fn has_finished(&mut self) -> bool{
@@ -42,6 +46,6 @@ impl <F: FnMut(), P: FnMut(), C: FnMut(), E: FnMut() -> bool> Task for FiniteTas
     }
 
     fn end(&mut self){
-        (self.conclude)();
+        (self.on_finish)();
     }
 }

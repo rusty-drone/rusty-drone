@@ -16,10 +16,6 @@ impl <F: FnMut()> Task for InfiniteTask<F>{
     fn initialize(&mut self) {
     }
 
-    fn execute(&mut self) {
-        (self.f)();
-    }
-
     fn has_finished(&mut self) -> bool{
         false
     }

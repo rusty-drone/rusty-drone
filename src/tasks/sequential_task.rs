@@ -21,22 +21,6 @@ impl Task for SequentialTask{
         self.first.initialize();
     }
 
-    fn execute(&mut self) {
-        if !self.first.has_finished() {
-            self.first.execute();
-        }
-
-        else if !self.second_phase {
-            self.first.end();
-            self.second.initialize();
-            self.second_phase = true;
-        }
-
-        if self.second_phase {
-            self.second.execute();
-        }
-    }
-
     fn end(&mut self) {
         self.second.end();
     }

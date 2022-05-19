@@ -29,7 +29,8 @@ impl EventHandler {
 
         while  idx < self.listeners.len() {
             let b = &mut self.listeners[idx];
-            if b.fired() {
+            b.fired();
+            if b.all_tasks_finished() {
                 self.listeners.remove(idx);
                 println!("Removed index {} from listeners", idx);
                 continue;
