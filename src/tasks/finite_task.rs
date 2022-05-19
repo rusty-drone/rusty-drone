@@ -1,5 +1,7 @@
 use crate::tasks::task::Task;
 
+use super::sequential_task::SequentialTask;
+
 /**
  * Task that is initialized, and repeated executes until it has 
  * finished, at which point it is ended
@@ -49,3 +51,10 @@ impl <P: FnMut(), C: FnMut(), E: FnMut() -> bool> Task for FiniteTask<P, C, E> {
         (self.on_finish)();
     }
 }
+
+// impl <P: FnMut(), C: FnMut(), E: FnMut() -> bool> FiniteTask<P, C, E>{
+
+//     pub fn then(self: Box<Self>, task: Box<dyn Task>) -> SequentialTask{
+//         SequentialTask::new(self as Box<dyn Task>, task)
+//     }
+// }

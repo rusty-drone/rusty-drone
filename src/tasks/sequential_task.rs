@@ -7,18 +7,31 @@ use crate::tasks::task::Task;
 pub struct SequentialTask{
     pub first: Box<dyn Task>,
     pub second: Box<dyn Task>,
+    first_phase: bool,
     second_phase: bool
 }
 
 impl SequentialTask {
     pub fn new(first: Box<dyn Task>, second: Box<dyn Task>) -> Self {
-        SequentialTask { first, second, second_phase: false }
+        SequentialTask { first, second, first_phase: true, second_phase: false }
     }
 }
 
 impl Task for SequentialTask{
     fn initialize(&mut self) {
-        self.first.initialize();
+        if self.first.has_finished() && !self.second_phase {
+            self.second_phase = true;
+            self.first_phase = false;
+            self.first.end();
+        }
+
+        if self.first_phase {
+            self.first.initialize();
+            self.first_phase = false;
+        }
+        else if self.second_phase {
+            self.second.initialize();
+        }
     }
 
     fn end(&mut self) {
@@ -26,6 +39,6 @@ impl Task for SequentialTask{
     }
 
     fn has_finished(&mut self) -> bool {
-        self.second.has_finished()
+        self.second.has_finished() && self.second_phase
     }
 }

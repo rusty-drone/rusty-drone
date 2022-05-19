@@ -3,17 +3,22 @@ use crate::tasks::task::Task;
  * continuously running task.
  */
 pub struct InfiniteTask<F: FnMut()> {
-    f: F,
+    on_start: F,
+    initialized: bool,
 }
 
 impl <F: FnMut()> InfiniteTask<F> {
-    pub fn new(f: F) -> Self {
-        InfiniteTask { f }
+    pub fn new(on_start: F) -> Self {
+        InfiniteTask { on_start, initialized: false }
     }
 }
 
 impl <F: FnMut()> Task for InfiniteTask<F>{
     fn initialize(&mut self) {
+        if !self.initialized {
+            (self.on_start)();
+            self.initialized = true;
+        }
     }
 
     fn has_finished(&mut self) -> bool{
