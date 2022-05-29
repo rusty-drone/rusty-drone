@@ -1,6 +1,6 @@
 use crate::tasks::task::Task;
 
-use super::sequential_task::SequentialTask;
+use super::{sequential_task::SequentialTask, parallel_task::ParallelTask};
 
 /**
  * Task that is initialized, and repeated executes until it has 
@@ -23,16 +23,6 @@ impl <P: FnMut(), C: FnMut(), E: FnMut() -> bool> FiniteTask<P, C, E> {
     pub fn new(on_start: P, on_finish: C, has_finished: E) -> Self {
         FiniteTask {on_start: on_start, on_finish: on_finish, has_finished, initialized: false}
     }
-
-    // pub fn new2(f: F, has_finished: E) -> Self {
-    //     // let prelude: P = || {};
-    //     // FiniteTask::new(f, prelude, || {}, has_finished)
-    // }
-
-    //TODO: implement `then` to be able to easily generate sequential tasks
-    // pub fn then(&self, task: Box<dyn Task>) -> SequentialTask{
-    //     SequentialTask::new(Box::new(&self as &dyn Task), task)
-    // }
 }
 
 impl <P: FnMut(), C: FnMut(), E: FnMut() -> bool> Task for FiniteTask<P, C, E> {
@@ -52,9 +42,13 @@ impl <P: FnMut(), C: FnMut(), E: FnMut() -> bool> Task for FiniteTask<P, C, E> {
     }
 }
 
-// impl <P: FnMut(), C: FnMut(), E: FnMut() -> bool> FiniteTask<P, C, E>{
+impl <P: FnMut(), C: FnMut(), E: FnMut() -> bool> FiniteTask<P, C, E> where P: 'static, C: 'static, E: 'static{
 
-//     pub fn then(self: Box<Self>, task: Box<dyn Task>) -> SequentialTask{
-//         SequentialTask::new(self as Box<dyn Task>, task)
-//     }
-// }
+    pub fn then(self: Self, task: Box<dyn Task>) -> SequentialTask{
+        SequentialTask::new(Box::new(self), task)
+    }
+
+    pub fn with(self: Self, task: Box<dyn Task>) -> ParallelTask {
+        ParallelTask::new(Box::new(self), task)
+    }
+}

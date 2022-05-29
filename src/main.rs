@@ -10,7 +10,7 @@ fn main() {
     let drivetrain = Rc::new(RefCell::new(PureComponent::new(
         Box::new(ConstantStream::<(f64, f64)>::new((0.0, 0.0))),
         Box::new(ConstantStream::<(f64, f64)>::new((12.0, 12.0))),
-        |x| {println!("{} V, {} V", x.0, x.1)})));
+        |x| {println!("{} V, {} V", x.0, x.1)}, std::time::Duration::from_millis(20))));
     
     let drivetrain_c1 = drivetrain.clone();
     let drivetrain_c2 = drivetrain.clone();
@@ -29,7 +29,7 @@ fn main() {
         Box::new(move || {Instant::now().duration_since(initial).as_millis() > 6000}),
     );
 
-    let sequential = SequentialTask::new(Box::new(task), Box::new(task2));
+    let sequential = task.then(Box::new(task2));
 
     // let actions = vec![Box::new(task)as Box<dyn Task>, Box::new(task2) as Box<dyn Task>];
     let actions = vec![Box::new(sequential)as Box<dyn Task>];

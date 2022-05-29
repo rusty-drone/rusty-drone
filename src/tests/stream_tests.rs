@@ -44,4 +44,26 @@ mod streams_tests{
 
         assert_eq!(c.next(), 5.0);
     }
+
+    #[test]
+    fn diff_in_outs() {
+        // maps from f64 --> bool --> f32
+        let s = ConstantStream::new(5.0);
+        let mut o = s.map(|x| {
+            if x > 4.0 {
+                true
+            }
+            else {
+                false
+            }
+        }).map(|x| {
+            if x {
+                8.0 as f32
+            }
+            else {
+                8.0 as f32
+            }
+        });
+        assert_eq!(o.next(), 8.0);
+    }
 }

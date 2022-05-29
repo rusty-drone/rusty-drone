@@ -1,11 +1,6 @@
-use crate::streams::constant_stream::ConstantStream;
+use crate::{streams::constant_stream::ConstantStream};
 use crate::streams::map_stream::MapStream;
 use crate::streams::zip_stream::ZipStream;
-
-use num_traits::{NumOps, NumAssign};
-/*
-1. don't use Copy or as many constraints --> should be any type to be used
-*/
 
 pub trait StreamOps: Copy {}
 
@@ -14,7 +9,7 @@ impl StreamOps for i32 {}
 impl StreamOps for f64 {}
 impl StreamOps for i64 {}
 impl StreamOps for (f64, f64) {}
-
+impl StreamOps for bool {}
 /**
  * Generic implementation of `Stream`. Used for all input and output
  * data sources.

@@ -1,3 +1,4 @@
 pub trait Clock {
-    fn apply(&self, f: &mut dyn FnMut());
+    fn apply(&mut self);
+    fn get_tick_speed(&self) -> std::time::Duration;
 }
